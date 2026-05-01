@@ -1,10 +1,4 @@
-
----
-
-# ⚡ **main.yml الكامل:**
-
-```yaml
-name: 🎵 Deploy Spotify Clone
+name: Deploy Spotify Clone
 
 on:
   push:
@@ -27,24 +21,24 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: ⚙️ Setup Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v4
       
-      - name: 📤 Upload
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
       
-      - name: 🚀 Deploy
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
       
-      - name: 🎉 Done
+      - name: Deployment complete
         run: |
-          echo "✅ Deployed!"
-          echo "☁️ Cloudinary: ${{ env.CLOUD_NAME }}"
-          echo "📎 Collection: ${{ env.COLLECTION_URL }}"
-          echo "🌐 URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "Deployed successfully!"
+          echo "Cloudinary: ${{ env.CLOUD_NAME }}"
+          echo "Collection: ${{ env.COLLECTION_URL }}"
+          echo "URL: ${{ steps.deployment.outputs.page_url }}"
