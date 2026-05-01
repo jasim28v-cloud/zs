@@ -1,74 +1,53 @@
-name: Deploy Spotify Clone to Cloudinary & GitHub Pages
+name: 🎵 Deploy Spotify Clone
 
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 env:
   CLOUD_NAME: so2_mk
   COLLECTION_URL: https://collection.cloudinary.com/dmla61v7n
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-    - name: 🚚 Checkout Repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    
+    - uses: actions/configure-pages@v4
     
     - name: 🐍 Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
     
-    - name: 📦 Install Dependencies
+    - name: 🎵 Build Site
       run: |
-        python -m pip install --upgrade pip
-        pip install flask cloudinary requests python-dotenv gunicorn
-    
-    - name: 🔍 Verify Project Structure
-      run: |
-        echo "📁 Project Structure:"
-        ls -la
-        echo ""
-        echo "☁️ Cloudinary Config:"
-        echo "  Cloud Name: $CLOUD_NAME"
-        echo "  Collection: $COLLECTION_URL"
-    
-    - name: 🎵 Build Site (Run scraper.py)
-      run: |
-        echo "Building Spotify Clone..."
+        echo "🎵 Building Spotify Clone..."
+        echo "☁️ Cloudinary: ${{ env.CLOUD_NAME }}"
+        echo "📎 Collection: ${{ env.COLLECTION_URL }}"
         python scraper.py
         echo ""
-        echo "Created files:"
+        echo "📁 Created files:"
         ls -la static/
     
-    - name: 📤 Upload to Cloudinary
-      env:
-        CLOUDINARY_URL: cloudinary://${{ secrets.CLOUDINARY_API_KEY }}:${{ secrets.CLOUDINARY_API_SECRET }}@$CLOUD_NAME
-      run: |
-        echo "Uploading to Cloudinary..."
-        python scripts/upload_to_cloudinary.py || echo "Upload skipped (no API keys)"
-    
-    - name: 📊 Generate Build Report
-      run: |
-        echo "# Spotify Clone Build Report" > BUILD_REPORT.md
-        echo "**Build Date:** $(date)" >> BUILD_REPORT.md
-        echo "**Cloud Name:** $CLOUD_NAME" >> BUILD_REPORT.md
-        echo "**Status:** Success" >> BUILD_REPORT.md
-    
-    - name: 🚀 Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
+    - uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./static
-        enable_jekyll: false
+        path: './static'
     
-    - name: 📢 Done
-      run: |
-        echo "Deployment Complete!"
-        echo "Cloudinary: https://console.cloudinary.com/$CLOUD_NAME"
-        echo "Collection: $COLLECTION_URL"
+    - name: 🚀 Deploy
+      id: deployment
+      uses: actions/deploy-pages@v4
+    
+    - name: 🎉 Success
+      run: echo "🎉 https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
