@@ -3,57 +3,51 @@
 
 """
 Spotify Clone Generator - صديقك الذهب 🎵
-يقوم بإنشاء جميع ملفات المشروع ورفعها تلقائياً
+Cloudinary: so2_mk
 """
 
 import os
 import json
 import shutil
-import requests
 from pathlib import Path
 from datetime import datetime
 import subprocess
 
 class SpotifyCloneGenerator:
-    def __init__(self, cloud_name="do_2gg", collection_url="https://collection.cloudinary.com/dnmpmysk6"):
+    def __init__(self, cloud_name="so2_mk", collection_url="https://collection.cloudinary.com/dmla61v7n"):
         self.cloud_name = cloud_name
         self.collection_url = collection_url
         self.project_name = "spotify-clone"
         self.base_path = Path(self.project_name)
         
-        # هيكل المجلدات
-        self.structure = {
-            "folders": [
-                ".github/workflows",
-                "templates",
-                "static/css",
-                "static/js",
-                "static/images",
-                "data",
-                "scripts"
-            ],
-            "files": []
-        }
-        
         print(f"""
-        ╔══════════════════════════════════════════╗
-        ║     🎵 Spotify Clone Generator 🎵      ║
-        ║     Cloud: {cloud_name}                    ║
-        ║     Collection: {collection_url[:30]}... ║
-        ╚══════════════════════════════════════════╝
+        ╔══════════════════════════════════════╗
+        ║   🎵 Spotify Clone Generator 🎵    ║
+        ║   Cloud: {cloud_name}                   ║
+        ║   Collection: dmla61v7n             ║
+        ╚══════════════════════════════════════╝
         """)
 
     def create_directory_structure(self):
         """إنشاء هيكل المجلدات"""
         print("📁 إنشاء المجلدات...")
-        for folder in self.structure["folders"]:
+        folders = [
+            ".github/workflows",
+            "templates",
+            "static/css",
+            "static/js",
+            "static/images",
+            "data",
+            "scripts"
+        ]
+        for folder in folders:
             folder_path = self.base_path / folder
             folder_path.mkdir(parents=True, exist_ok=True)
             print(f"  ✅ {folder}")
 
     def generate_main_yml(self):
         """إنشاء ملف GitHub Actions"""
-        print("\n⚙️  إنشاء GitHub Actions workflow...")
+        print("\n⚙️  إنشاء .github/workflows/main.yml...")
         
         yml_content = f"""name: Deploy Spotify Clone to Cloudinary & GitHub Pages
 
@@ -90,7 +84,7 @@ jobs:
       run: |
         echo "Checking project structure..."
         ls -la
-        echo "Cloudinary Config:"
+        echo "☁️ Cloudinary Config:"
         echo "  Cloud Name: ${{{{ env.CLOUD_NAME }}}}"
         echo "  Collection: ${{{{ env.COLLECTION_URL }}}}"
     
@@ -143,10 +137,10 @@ jobs:
         workflow_path = self.base_path / ".github" / "workflows" / "main.yml"
         workflow_path.parent.mkdir(parents=True, exist_ok=True)
         workflow_path.write_text(yml_content, encoding='utf-8')
-        print(f"  ✅ main.yml created at {workflow_path}")
+        print(f"  ✅ main.yml created")
 
     def generate_flask_app(self):
-        """إنشاء تطبيق Flask الرئيسي"""
+        """إنشاء main.py"""
         print("\n🐍 إنشاء main.py...")
         
         main_py = f"""from flask import Flask, render_template, jsonify, request, send_from_directory
@@ -159,14 +153,13 @@ import json
 
 app = Flask(__name__)
 
-# Cloudinary Configuration
+# Cloudinary Configuration - so2_mk
 cloudinary.config(
     cloud_name="{self.cloud_name}",
     api_key=os.environ.get('CLOUDINARY_API_KEY', 'DEMO_KEY'),
     api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'DEMO_SECRET')
 )
 
-# Load music data
 def load_music_data():
     try:
         with open('data/music_data.json', 'r', encoding='utf-8') as f:
@@ -237,10 +230,6 @@ def upload_to_cloudinary():
     
     return jsonify({{"error": "Upload failed"}}), 400
 
-@app.route('/static/<path:path>')
-def serve_static(path):
-    return send_from_directory('static', path)
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
@@ -250,7 +239,7 @@ if __name__ == '__main__':
         print("  ✅ main.py created")
 
     def generate_html_template(self):
-        """إنشاء قالب HTML"""
+        """إنشاء index.html"""
         print("\n🎨 إنشاء index.html...")
         
         html_content = f"""<!DOCTYPE html>
@@ -260,10 +249,8 @@ if __name__ == '__main__':
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎵 Spotify Clone | Cloudinary {self.cloud_name}</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
 </head>
 <body>
-    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo-container">
             <div class="logo">🎵 Spotify</div>
@@ -288,13 +275,6 @@ if __name__ == '__main__':
             </a>
         </nav>
         
-        <div class="playlists-section">
-            <h3>🎧 قوائم التشغيل</h3>
-            <div class="playlist-item">✨ قائمة التشغيل 1</div>
-            <div class="playlist-item">🎸 روك كلاسيك</div>
-            <div class="playlist-item">🌙 أغاني هادئة</div>
-        </div>
-
         <div class="cloudinary-section">
             <h3>☁️ Cloudinary</h3>
             <p class="cloud-info">Cloud: <strong>{self.cloud_name}</strong></p>
@@ -306,37 +286,19 @@ if __name__ == '__main__':
         </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Header -->
         <header class="top-bar">
-            <div class="nav-arrows">
-                <button class="arrow-btn">⬅️</button>
-                <button class="arrow-btn">➡️</button>
-            </div>
             <div class="user-section">
                 <span class="premium-badge">👑 Premium</span>
                 <span class="user-avatar">👤</span>
             </div>
         </header>
 
-        <!-- Greeting -->
-        <section class="greeting-section">
-            <h1>👋 مساء الخير</h1>
-            <div class="featured-grid" id="featuredGrid">
-                <!-- Generated by JS -->
-            </div>
-        </section>
-
-        <!-- Playlists -->
         <section class="content-section">
             <h2>🎵 قوائم التشغيل المميزة</h2>
-            <div class="playlists-grid" id="playlistsGrid">
-                <!-- Generated by JS -->
-            </div>
+            <div class="playlists-grid" id="playlistsGrid"></div>
         </section>
 
-        <!-- Cloudinary Integration -->
         <section class="content-section">
             <h2>☁️ التكامل مع Cloudinary</h2>
             <div class="cloudinary-card">
@@ -357,7 +319,6 @@ if __name__ == '__main__':
         </section>
     </main>
 
-    <!-- Player Bar -->
     <footer class="player-bar">
         <div class="now-playing">
             <div class="track-cover">🎵</div>
@@ -373,24 +334,13 @@ if __name__ == '__main__':
             <button class="control-btn play-btn">▶️</button>
             <button class="control-btn">⏭️</button>
             <button class="control-btn">🔁</button>
-            <div class="progress-bar">
-                <span class="time">0:00</span>
-                <div class="progress">
-                    <div class="progress-filled"></div>
-                </div>
-                <span class="time">0:00</span>
-            </div>
         </div>
         <div class="volume-controls">
             <button class="control-btn">🔊</button>
-            <div class="volume-bar">
-                <div class="volume-filled"></div>
-            </div>
         </div>
     </footer>
 
-    <!-- Cloudinary Widget -->
-    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
     <script src="/static/js/app.js"></script>
 </body>
 </html>"""
@@ -399,11 +349,10 @@ if __name__ == '__main__':
         print("  ✅ index.html created")
 
     def generate_css(self):
-        """إنشاء ملف CSS"""
+        """إنشاء style.css"""
         print("\n🎨 إنشاء style.css...")
         
-        css_content = """/* Spotify Clone Styles */
-* {
+        css_content = """* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -426,7 +375,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Sidebar */
 .sidebar {
     position: fixed;
     right: 0;
@@ -483,7 +431,6 @@ body {
     font-size: 20px;
 }
 
-/* Main Content */
 .main-content {
     margin-right: 240px;
     padding: 24px;
@@ -492,24 +439,9 @@ body {
 
 .top-bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: 32px;
-}
-
-.nav-arrows {
-    display: flex;
-    gap: 16px;
-}
-
-.arrow-btn {
-    background: rgba(0,0,0,0.7);
-    border: none;
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
 }
 
 .user-section {
@@ -525,7 +457,6 @@ body {
     font-size: 14px;
 }
 
-/* Content Grids */
 .content-section {
     margin-bottom: 40px;
 }
@@ -533,30 +464,6 @@ body {
 .content-section h2 {
     margin-bottom: 20px;
     font-size: 24px;
-}
-
-.featured-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
-    margin-bottom: 40px;
-}
-
-.featured-card {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 8px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.featured-card:hover {
-    background: rgba(255,255,255,0.2);
-    transform: scale(1.02);
 }
 
 .playlists-grid {
@@ -577,7 +484,6 @@ body {
     background: #282828;
 }
 
-/* Cloudinary Card */
 .cloudinary-card {
     background: linear-gradient(135deg, #3b82f6, #1e40af);
     padding: 24px;
@@ -596,7 +502,26 @@ body {
     font-size: 40px;
 }
 
-/* Player Bar */
+.cloudinary-section {
+    margin-top: 24px;
+    padding: 12px;
+}
+
+.upload-btn {
+    background: var(--spotify-green);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.upload-btn:hover {
+    background: #1ed760;
+}
+
 .player-bar {
     position: fixed;
     bottom: 0;
@@ -621,10 +546,10 @@ body {
 
 .player-controls {
     display: flex;
-    flex-direction: column;
     align-items: center;
     width: 40%;
     gap: 8px;
+    justify-content: center;
 }
 
 .control-btn {
@@ -633,7 +558,6 @@ body {
     color: var(--text-secondary);
     font-size: 16px;
     cursor: pointer;
-    margin: 0 8px;
 }
 
 .control-btn:hover {
@@ -646,63 +570,14 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.progress-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-}
-
-.progress {
-    flex: 1;
-    height: 4px;
-    background: #535353;
-    border-radius: 2px;
-}
-
-.progress-filled {
-    width: 30%;
-    height: 100%;
-    background: var(--text-primary);
-    border-radius: 2px;
-}
-
-/* Upload Section */
-.cloudinary-section {
-    margin-top: 24px;
-    padding: 12px;
-}
-
-.upload-btn {
-    background: var(--spotify-green);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 8px;
-}
-
-.upload-btn:hover {
-    background: #1ed760;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
     .sidebar {
         display: none;
     }
     .main-content {
         margin-right: 0;
-    }
-    .player-bar {
-        right: 0;
     }
 }
 """
@@ -711,63 +586,35 @@ body {
         print("  ✅ style.css created")
 
     def generate_javascript(self):
-        """إنشاء ملف JavaScript"""
+        """إنشاء app.js"""
         print("\n⚡ إنشاء app.js...")
         
-        js_content = f"""// Spotify Clone - Cloudinary Integration
+        js_content = f"""// Spotify Clone - Cloudinary: {self.cloud_name}
 const CLOUD_NAME = '{self.cloud_name}';
 const COLLECTION_URL = '{self.collection_url}';
 
-// Load playlists
 async function loadPlaylists() {{
     try {{
         const response = await fetch('/api/playlists');
         const playlists = await response.json();
         displayPlaylists(playlists);
     }} catch (error) {{
-        console.error('Error loading playlists:', error);
+        console.error('Error:', error);
         displayDefaultContent();
     }}
 }}
 
-// Load featured
-async function loadFeatured() {{
-    try {{
-        const response = await fetch('/api/featured');
-        const featured = await response.json();
-        displayFeatured(featured);
-    }} catch (error) {{
-        console.error('Error loading featured:', error);
-    }}
-}}
-
-// Display content
 function displayPlaylists(playlists) {{
     const grid = document.getElementById('playlistsGrid');
     if (!grid) return;
     
     grid.innerHTML = playlists.map(pl => `
         <div class="playlist-card">
-            <div class="playlist-image" style="font-size: 48px; text-align: center; padding: 20px;">
+            <div style="font-size: 48px; text-align: center; padding: 20px;">
                 ${{pl.cover || '🎵'}}
             </div>
-            <div class="playlist-card-title">${{pl.name}}</div>
-            <div class="playlist-card-desc">${{pl.description}}</div>
-        </div>
-    `).join('');
-}}
-
-function displayFeatured(featured) {{
-    const grid = document.getElementById('featuredGrid');
-    if (!grid) return;
-    
-    grid.innerHTML = featured.map(item => `
-        <div class="featured-card" style="background: ${{item.color}}40;">
-            <span style="font-size: 32px;">🎵</span>
-            <div>
-                <h3>${{item.title}}</h3>
-                <p>${{item.description}}</p>
-            </div>
+            <div style="font-weight: 600;">${{pl.name}}</div>
+            <div style="font-size: 14px; opacity: 0.7;">${{pl.description}}</div>
         </div>
     `).join('');
 }}
@@ -784,109 +631,46 @@ function displayDefaultContent() {{
     displayPlaylists(defaultPlaylists);
 }}
 
-// Cloudinary Upload Widget
-function initializeCloudinaryUpload() {{
-    const uploadInput = document.getElementById('uploadInput');
-    if (!uploadInput) return;
-    
-    uploadInput.addEventListener('change', async (e) => {{
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const status = document.getElementById('uploadStatus');
-        if (status) {{
-            status.innerHTML = '<p style="color: #1db954;">⏳ جاري الرفع إلى Cloudinary...</p>';
-        }}
-        
-        try {{
-            const response = await fetch('/upload-to-cloudinary', {{
-                method: 'POST',
-                body: formData
-            }});
-            const data = await response.json();
-            
-            if (data.success) {{
-                if (status) {{
-                    status.innerHTML = `
-                        <p style="color: #1db954;">✅ تم الرفع بنجاح!</p>
-                        <p style="font-size: 12px; margin-top: 4px;">
-                            <a href="${{data.url}}" target="_blank" style="color: #1db954;">
-                                🔗 عرض الملف
-                            </a>
-                        </p>
-                    `;
-                }}
-                addToRecentUploads(data.url);
-            }} else {{
-                throw new Error(data.error || 'Upload failed');
-            }}
-        }} catch (error) {{
-            if (status) {{
-                status.innerHTML = `<p style="color: #ff4444;">❌ فشل الرفع: ${{error.message}}</p>`;
-            }}
-        }}
-    }});
-}}
-
-function addToRecentUploads(url) {{
-    const container = document.getElementById('recentUploads');
-    if (!container) return;
-    
-    const item = document.createElement('div');
-    item.className = 'recent-item';
-    item.innerHTML = `
-        <span>📁</span>
-        <a href="${{url}}" target="_blank" style="color: white; font-size: 12px;">
-            ${{url.split('/').pop().substring(0, 30)}}...
-        </a>
-    `;
-    container.prepend(item);
-}}
-
-// Mock Player Controls
-function initializePlayer() {{
-    const playBtn = document.querySelector('.play-btn');
-    if (playBtn) {{
-        let isPlaying = false;
-        playBtn.addEventListener('click', () => {{
-            isPlaying = !isPlaying;
-            playBtn.textContent = isPlaying ? '⏸️' : '▶️';
-        }});
-    }}
-    
-    const likeBtn = document.querySelector('.like-btn');
-    if (likeBtn) {{
-        let isLiked = false;
-        likeBtn.addEventListener('click', () => {{
-            isLiked = !isLiked;
-            likeBtn.style.color = isLiked ? '#1db954' : '#b3b3b3';
-        }});
-    }}
-}}
-
-// Display Cloudinary Info
-function showCloudinaryInfo() {{
-    console.log(`
-    ☁️ Cloudinary Configuration:
-    - Cloud Name: ${{CLOUD_NAME}}
-    - Collection: ${{COLLECTION_URL}}
-    - Status: Connected ✅
-    `);
-}}
-
-// Initialize
+// Cloudinary Upload
 document.addEventListener('DOMContentLoaded', () => {{
     loadPlaylists();
-    loadFeatured();
-    initializeCloudinaryUpload();
-    initializePlayer();
-    showCloudinaryInfo();
     
-    console.log('🎵 Spotify Clone Ready!');
-    console.log('☁️ Cloudinary:', CLOUD_NAME);
+    const uploadInput = document.getElementById('uploadInput');
+    if (uploadInput) {{
+        uploadInput.addEventListener('change', async (e) => {{
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const status = document.getElementById('uploadStatus');
+            if (status) {{
+                status.innerHTML = '<p style="color: #1db954;">⏳ جاري الرفع إلى Cloudinary...</p>';
+            }}
+            
+            try {{
+                const response = await fetch('/upload-to-cloudinary', {{
+                    method: 'POST',
+                    body: formData
+                }});
+                const data = await response.json();
+                
+                if (data.success) {{
+                    if (status) {{
+                        status.innerHTML = `<p style="color: #1db954;">✅ تم الرفع بنجاح!</p>
+                        <p style="font-size: 12px;"><a href="${{data.url}}" target="_blank">🔗 عرض الملف</a></p>`;
+                    }}
+                }}
+            }} catch (error) {{
+                if (status) {{
+                    status.innerHTML = `<p style="color: #ff4444;">❌ فشل الرفع</p>`;
+                }}
+            }}
+        }});
+    }}
+    
+    console.log('🎵 Spotify Clone Ready! ☁️ {self.cloud_name}');
 }});
 """
         
@@ -897,45 +681,36 @@ document.addEventListener('DOMContentLoaded', () => {{
         """إنشاء ملفات التكوين"""
         print("\n⚙️  إنشاء ملفات التكوين...")
         
-        # requirements.txt
         requirements = """flask==2.3.0
 cloudinary==1.36.0
 requests==2.31.0
 python-dotenv==1.0.0
-gunicorn==21.2.0
-pytest==7.4.0"""
+gunicorn==21.2.0"""
         (self.base_path / "requirements.txt").write_text(requirements, encoding='utf-8')
         
-        # .env
         env_content = f"""CLOUDINARY_CLOUD_NAME={self.cloud_name}
 CLOUDINARY_COLLECTION_URL={self.collection_url}
-FLASK_ENV=production
-SECRET_KEY=spotify-clone-secret-key-{datetime.now().timestamp()}"""
+FLASK_ENV=production"""
         (self.base_path / ".env").write_text(env_content, encoding='utf-8')
         
-        # .gitignore
         gitignore = """venv/
 __pycache__/
 *.pyc
 .env
 *.db
 .DS_Store
-node_modules/
-*.log"""
+node_modules/"""
         (self.base_path / ".gitignore").write_text(gitignore, encoding='utf-8')
         
-        # README.md
         readme = f"""# 🎵 Spotify Clone with Cloudinary
 
 ![Cloudinary](https://img.shields.io/badge/Cloudinary-{self.cloud_name}-blue)
-![Python](https://img.shields.io/badge/Python-3.8+-green)
-![Flask](https://img.shields.io/badge/Flask-2.3.0-red)
 
-## ☁️ Cloudinary Integration
+## ☁️ Cloudinary
 - **Cloud Name:** `{self.cloud_name}`
-- **Collection:** [{self.collection_url}]({self.collection_url})
+- **Collection:** {self.collection_url}
 
-## 🚀 Quick Start
+## 🚀 Run
 ```bash
 pip install -r requirements.txt
 python main.py
