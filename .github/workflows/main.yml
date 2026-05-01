@@ -1,66 +1,50 @@
-name: Deploy Spotify Clone to Cloudinary & GitHub Pages
+
+---
+
+# ⚡ **main.yml الكامل:**
+
+```yaml
+name: 🎵 Deploy Spotify Clone
 
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 env:
   CLOUD_NAME: so2_mk
   COLLECTION_URL: https://collection.cloudinary.com/dmla61v7n
 
 jobs:
-  build-and-deploy:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    
     steps:
-    - name: 🚚 Checkout Repository
-      uses: actions/checkout@v4
-    
-    - name: 🐍 Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-    
-    - name: 📦 Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flask cloudinary requests python-dotenv gunicorn
-    
-    - name: 🔍 Verify Project Structure
-      run: |
-        echo "📁 Project Structure:"
-        ls -la
-        echo ""
-        echo "☁️ Cloudinary Config:"
-        echo "  Cloud Name: $CLOUD_NAME"
-        echo "  Collection: $COLLECTION_URL"
-    
-    - name: 📤 Upload to Cloudinary
-      env:
-        CLOUDINARY_URL: cloudinary://${{ secrets.CLOUDINARY_API_KEY }}:${{ secrets.CLOUDINARY_API_SECRET }}@$CLOUD_NAME
-      run: |
-        echo "Uploading to Cloudinary..."
-        python scripts/upload_to_cloudinary.py || echo "⚠️ Upload skipped (no API keys)"
-    
-    - name: 📊 Generate Build Report
-      run: |
-        echo "# 🎵 Spotify Clone Build Report" > BUILD_REPORT.md
-        echo "**Build Date:** $(date)" >> BUILD_REPORT.md
-        echo "**Cloud Name:** $CLOUD_NAME" >> BUILD_REPORT.md
-        echo "**Status:** Success ✅" >> BUILD_REPORT.md
-    
-    - name: 🚀 Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./static
-        enable_jekyll: false
-    
-    - name: 📢 Done
-      run: |
-        echo "🎉 Deployment Complete!"
-        echo "☁️ Cloudinary: https://console.cloudinary.com/$CLOUD_NAME"
-        echo "📚 Collection: $COLLECTION_URL"
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: ⚙️ Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: 📤 Upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      
+      - name: 🚀 Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+      
+      - name: 🎉 Done
+        run: |
+          echo "✅ Deployed!"
+          echo "☁️ Cloudinary: ${{ env.CLOUD_NAME }}"
+          echo "📎 Collection: ${{ env.COLLECTION_URL }}"
+          echo "🌐 URL: ${{ steps.deployment.outputs.page_url }}"
