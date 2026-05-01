@@ -1,6 +1,3 @@
-mkdir -p .github/workflows
-
-cat > .github/workflows/main.yml << 'MAINEOF'
 name: 🎵 Deploy Spotify Clone
 
 on:
@@ -56,6 +53,3 @@ jobs:
         echo "📎 Collection: ${{ env.COLLECTION_URL }}"
         echo "🌐 URL: ${{ steps.deployment.outputs.page_url }}"
         echo "========================================="
-MAINEOF
-
-echo "✅ main.yml created!"
