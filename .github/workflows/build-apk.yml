@@ -1,4 +1,4 @@
-name: 🟣 Build VIOLET APK
+name: 🟢 Build GREEN APK
 
 on:
   push:
@@ -39,14 +39,15 @@ jobs:
           cp *.html www/ 2>/dev/null || true
           cp *.js www/ 2>/dev/null || true
           cp *.json www/ 2>/dev/null || true
+          cp *.svg www/ 2>/dev/null || true
 
       - name: 📄 Create package.json
         run: |
           cat > package.json << 'EOF'
           {
-            "name": "violet-app",
+            "name": "green-app",
             "version": "1.0.0",
-            "description": "VIOLET - Purple Glass PWA",
+            "description": "GREEN - Emerald Glass Edition",
             "main": "www/index.html",
             "dependencies": {
               "@capacitor/android": "^6.0.0",
@@ -60,8 +61,8 @@ jobs:
         run: |
           cat > capacitor.config.json << 'EOF'
           {
-            "appId": "com.violet.purple",
-            "appName": "VIOLET",
+            "appId": "com.green.emerald",
+            "appName": "GREEN",
             "webDir": "www",
             "server": {
               "androidScheme": "https"
@@ -82,17 +83,17 @@ jobs:
           cat > android/app/src/main/res/values/strings.xml << 'EOF'
           <?xml version='1.0' encoding='utf-8'?>
           <resources>
-              <string name="app_name">VIOLET</string>
-              <string name="title_activity_main">VIOLET 🟣</string>
+              <string name="app_name">GREEN</string>
+              <string name="title_activity_main">GREEN 🟢</string>
           </resources>
           EOF
           
           cat > android/app/src/main/res/values/colors.xml << 'EOF'
           <?xml version='1.0' encoding='utf-8'?>
           <resources>
-              <color name="colorPrimary">#7c3aed</color>
-              <color name="colorPrimaryDark">#0a0812</color>
-              <color name="colorAccent">#c084fc</color>
+              <color name="colorPrimary">#059669</color>
+              <color name="colorPrimaryDark">#0a0f0b</color>
+              <color name="colorAccent">#34d399</color>
           </resources>
           EOF
 
@@ -108,5 +109,5 @@ jobs:
       - name: 📤 Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: VIOLET-APK
+          name: GREEN-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
