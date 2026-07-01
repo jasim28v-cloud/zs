@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>🟣 VIOLET | استكشاف</title>
-    <link rel="manifest" href="/manifest.json">
+    <title>🟢 GREEN | استكشاف</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root{--accent:#7c3aed;--border:rgba(124,58,237,0.12);--bg:#0a0812}
+        :root{--accent:#059669;--border:rgba(5,150,105,0.12);--bg:#0a0f0b}
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;min-height:100vh;overflow-y:auto}
-        .header{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,8,18,0.7);backdrop-filter:blur(20px);z-index:10}
-        .btn-back{background:rgba(124,58,237,0.1);border:1px solid var(--border);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#a855f7;cursor:pointer;font-size:16px}
+        .header{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,15,11,0.7);backdrop-filter:blur(20px);z-index:10}
+        .btn-back{background:rgba(5,150,105,0.1);border:1px solid var(--border);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:16px}
+        h2{font-size:18px;font-weight:700}
         .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px}
-        .thumb{aspect-ratio:9/16;background:rgba(124,58,237,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden}
+        .thumb{aspect-ratio:9/16;background:rgba(5,150,105,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden}
+        .thumb:hover{transform:scale(1.03);z-index:1}
         .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+        .thumb i{position:absolute;font-size:24px;color:#fff;z-index:1;opacity:0;transition:opacity 0.3s}
+        .thumb:hover i{opacity:1}
         .thumb .views{position:absolute;bottom:4px;left:4px;font-size:10px;background:rgba(0,0,0,0.6);padding:2px 6px;border-radius:10px}
-        .spinner{width:32px;height:32px;border:3px solid rgba(124,58,237,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:30px auto}
+        .spinner{width:32px;height:32px;border:3px solid rgba(5,150,105,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:30px auto}
         @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
@@ -28,11 +31,11 @@
 <div class="grid" id="exploreGrid"><div class="spinner" style="grid-column:1/-1"></div></div>
 <script src="firebase-config.js"></script>
 <script>
-    if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}
     let currentUser=null;
     auth.onAuthStateChanged(async u=>{if(!u){window.location.href='auth.html';return}currentUser=u;loadExplore()});
     async function loadExplore(){
-        const snap=await db.ref('videos').once('value');const videos=snap.val()||{};
+        const snap=await db.ref('videos').once('value');
+        const videos=snap.val()||{};
         const allVids=Object.entries(videos).map(([k,v])=>({id:k,...v})).sort((a,b)=>(b.likes||0)-(a.likes||0));
         const g=document.getElementById('exploreGrid');
         if(!allVids.length){g.innerHTML='<div style="text-align:center;padding:40px;grid-column:1/-1;opacity:0.5">لا توجد فيديوهات</div>';return}

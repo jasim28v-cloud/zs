@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>🟣 VIOLET | إشعارات</title>
-    <link rel="manifest" href="/manifest.json">
+    <title>🟢 GREEN | إشعارات</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root{--accent:#7c3aed;--border:rgba(124,58,237,0.12);--bg:#0a0812}
+        :root{--accent:#059669;--border:rgba(5,150,105,0.12);--bg:#0a0f0b}
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;min-height:100vh;overflow-y:auto}
-        .header{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,8,18,0.7);backdrop-filter:blur(20px);z-index:10}
-        .btn-back{background:rgba(124,58,237,0.1);border:1px solid var(--border);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#a855f7;cursor:pointer;font-size:16px}
+        .header{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,15,11,0.7);backdrop-filter:blur(20px);z-index:10}
+        .btn-back{background:rgba(5,150,105,0.1);border:1px solid var(--border);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:16px}
         .notif-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);align-items:center}
-        .notif-icon{width:40px;height:40px;border-radius:50%;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent)}
-        .spinner{width:32px;height:32px;border:3px solid rgba(124,58,237,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:30px auto}
+        .notif-icon{width:40px;height:40px;border-radius:50%;background:rgba(5,150,105,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent)}
+        .spinner{width:32px;height:32px;border:3px solid rgba(5,150,105,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:30px auto}
         @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
@@ -26,13 +25,14 @@
 <div id="notifsList"><div class="spinner"></div></div>
 <script src="firebase-config.js"></script>
 <script>
-    if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}
     let currentUser=null;
     auth.onAuthStateChanged(async u=>{if(!u){window.location.href='auth.html';return}currentUser=u;loadNotifs()});
     async function loadNotifs(){
-        const snap=await db.ref('notifications/'+currentUser.uid).once('value');const ns=snap.val()||{};
-        const c=document.getElementById('notifsList');const items=Object.values(ns).reverse();
-        if(!items.length){c.innerHTML='<div style="text-align:center;opacity:0.5;padding:40px"><i class="fas fa-bell" style="font-size:48px;color:#7c3aed;display:block;margin-bottom:12px"></i><p>لا توجد إشعارات</p></div>';return}
+        const snap=await db.ref('notifications/'+currentUser.uid).once('value');
+        const ns=snap.val()||{};
+        const c=document.getElementById('notifsList');
+        const items=Object.values(ns).reverse();
+        if(!items.length){c.innerHTML='<div style="text-align:center;opacity:0.5;padding:40px"><i class="fas fa-bell" style="font-size:48px;color:#059669;margin-bottom:12px;display:block"></i><p>لا توجد إشعارات</p></div>';return}
         c.innerHTML=items.map(n=>`<div class="notif-item"><div class="notif-icon"><i class="fas fa-bell"></i></div><div><div style="font-weight:600">${n.from||'مستخدم'}</div><div style="font-size:12px;opacity:0.6;margin-top:2px">${n.msg||''}</div></div></div>`).join('');
     }
 </script>
