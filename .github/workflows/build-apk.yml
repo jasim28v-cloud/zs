@@ -1,4 +1,4 @@
-name: 🃏 Build APK - Joker V2 (Custom Icon)
+name: 🃏 Build APK - Joker (All Sites)
 
 on:
   workflow_dispatch:
@@ -23,22 +23,26 @@ on:
           - 'com.violet.purple'
           - 'com.green.emerald'
           - 'com.flare.orange'
-      icon_choice:
-        description: '🎨 نوع الأيقونة'
+      app_color:
+        description: '🎨 لون الأيقونة'
         required: true
-        default: 'custom_png'
+        default: '#ea580c'
         type: choice
         options:
-          - 'حرف + لون (تلقائي)'
-          - 'صورة PNG مخصصة'
-      app_color:
-        description: '🎨 لون الأيقونة (للحرف فقط)'
-        required: false
-        default: '#ea580c'
+          - '#d4a843'
+          - '#7c3aed'
+          - '#059669'
+          - '#ea580c'
       app_letter:
-        description: '🔤 حرف الأيقونة (للحرف فقط)'
-        required: false
+        description: '🔤 حرف الأيقونة'
+        required: true
         default: 'F'
+        type: choice
+        options:
+          - 'L'
+          - 'V'
+          - 'G'
+          - 'F'
 
 permissions:
   contents: write
@@ -52,13 +56,6 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: 🖼️ Download Custom Icon (if provided)
-        if: github.event.inputs.icon_choice == 'صورة PNG مخصصة'
-        uses: actions/upload-artifact@v4
-        with:
-          name: custom-icon
-          path: icon-512.png
-
       - name: ☕ Setup Java
         uses: actions/setup-java@v4
         with:
@@ -70,10 +67,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: 📦 Install Capacitor + Image Tools
-        run: |
-          npm install -g @capacitor/cli @capacitor/core @capacitor/android
-          sudo apt-get update && sudo apt-get install -y imagemagick
+      - name: 📦 Install Capacitor
+        run: npm install -g @capacitor/cli @capacitor/core @capacitor/android
 
       - name: 📁 Create www folder
         run: |
@@ -118,8 +113,7 @@ jobs:
       - name: 🤖 Add Android Platform
         run: npx cap add android
 
-      - name: 🎨 Generate Icon - Letter Mode
-        if: github.event.inputs.icon_choice == 'حرف + لون (تلقائي)'
+      - name: 🎨 Generate Custom Icon
         run: |
           mkdir -p android/app/src/main/res/drawable
           mkdir -p android/app/src/main/res/mipmap-anydpi-v26
@@ -155,29 +149,7 @@ jobs:
           </adaptive-icon>
           EOF
           
-          echo "✅ Letter Icon Ready!"
-
-      - name: 🖼️ Generate Icon - Custom PNG Mode
-        if: github.event.inputs.icon_choice == 'صورة PNG مخصصة'
-        run: |
-          # تحويل PNG إلى أيقونات Android
-          mkdir -p android/app/src/main/res/mipmap-hdpi
-          mkdir -p android/app/src/main/res/mipmap-mdpi
-          mkdir -p android/app/src/main/res/mipmap-xhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
-          
-          # إذا فيه صورة في المشروع
-          if [ -f "icon-512.png" ]; then
-            convert icon-512.png -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-            convert icon-512.png -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-            convert icon-512.png -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-            convert icon-512.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-            convert icon-512.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-            echo "✅ Custom PNG Icon Ready!"
-          else
-            echo "⚠️ لا توجد صورة! سيتم استخدام الأيقونة الافتراضية"
-          fi
+          echo "✅ ${{ github.event.inputs.app_name }} أيقونة جاهزة!"
 
       - name: 🎨 Customize Android Strings
         run: |
